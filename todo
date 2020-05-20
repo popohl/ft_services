@@ -1,0 +1,10 @@
+cluster: Liste des containers:
+- Dashboard web de Kubernetes
+- Ingress Controller
+- server Nginx: ports 80 et 443
+- server FTPS: port 21
+- Wordpress: port 5050 => configurer le wordpress avec plusieurs utilisateurs et un admin
+- base de données MySQL pour wordpress
+- PhpMyAdmin: port 5000 => Relié à la bdd MySQL
+- Grafana: port 3000 => monitoring de **tous** les containers + dashboard pour chaque container
+- bdd influxDB pour Grafana
