@@ -7,17 +7,19 @@ LIGHT_BLUE="\033[1;34m"
 NC="\033[0m"
 
 # OS detection
-if [ "$OSTYPE" = "linux-gnu"* ]; then
-	MACHINE_OS="linux"
-elif [ "$OSTYPE" = "darwin"* ]; then
-	MACHINE_OS="mac"
-fi
+MACHINE_OS=$(uname -s)
 
 # Checks the presence of docker and minikube on the system
 if ! which docker 1> /dev/null || ! which minikube 1> /dev/null; then
 	echo "Please install docker and minikube before lauching this script"
 	exit 1
 fi
+
+# cleanup function for restart, stop and stop_all options
+cleanup () {
+	kubectl delete -k srcs
+	rm srcs/ftps/Dockerfile
+}
 
 # Option management
 VERBOSE="false"
@@ -29,26 +31,31 @@ fi
 # Mode management
 case "$1" in
 	start) echo "Ok let's go!" ;;
-	delete)
-		kubectl delete -k srcs
-		exit 0;;
+	restart)
+		cleanup
+		echo "Ok let's go!" ;;
 	stop)
-		kubectl delete -k srcs
+		cleanup
+		exit 0;;
+	stop_all)
+		cleanup
 		minikube stop
 		exit 0;;
 	extra)
-		brew install figlet lolcat;;
+		brew install figlet lolcat
+		exit 0;;
 	*) 
 		echo "Usage: ./ft_service [OPTION] [MODE]"
 		echo ""
 		echo "Options:"
-		echo "	-v	verbose"
+		echo "    -v         verbose"
 		echo ""
 		echo "Modes:"
-		echo "	start	starts the project"
-		echo "	delete	deletes the running kustomization"
-		echo "	stop	deletes the running kustomization and stops minikube"
-		echo "	extra	installs figlet and lolcat to make the results go 'yes'"
+		echo "    start      starts the project"
+		echo "    restart    deletes the running kustomization and reapplies it"
+		echo "    stop       deletes the running kustomization"
+		echo "    stop_all   deletes the running kustomization and stops minikube"
+		echo "    extra      installs figlet and lolcat to make the results go 'yes'"
 		exit 1;;
 esac
 
@@ -56,7 +63,7 @@ esac
 if ! minikube status 1> /dev/null 2> /dev/null; then
 	echo "Starting Minikube..."
 	if [ "$VERBOSE" = "true" ]; then
-		minikube start
+		minikube start --driver=virtualbox
 	else
 		minikube start 1> /dev/null
 	fi
@@ -73,13 +80,20 @@ else
 	minikube addons enable metrics-server 1> /dev/null
 fi
 
+# Prepares Dockerfiles
+mk_ip=$(minikube ip)
+sed "s|#MINIKUBE_IP#|$mk_ip|g" < srcs/ftps/Dockerfile-template > srcs/ftps/Dockerfile
+
+
 # Builds Dockerfiles
 echo "Building Docker images"
-eval $(minikube docker-env)
+eval "$(minikube docker-env)"
 if [ "$VERBOSE" = "true" ]; then
 	docker build -t custom-nginx:latest srcs/nginx/
+	docker build -t custom-ftps:latest srcs/ftps/
 else
 	docker build -t custom-nginx:latest srcs/nginx/ 1> /dev/null
+	docker build -t custom-ftps:latest srcs/ftps/ 1> /dev/null
 fi
 
 # Applies kustomization
@@ -104,5 +118,6 @@ kubectl get pods
 # Get urls
 echo ""
 echo "$LIGHT_BLUE""Nginx urls:""$NC"
-minikube service nginx --url | tr "\n" "#"  | sed -E 's|^(.*#)http(.*#)http://(.*)#|\1https\2ssh://bonjour@\3|' | tr "#" "\n"
-
+minikube service nginx --url | tr "\n" "#" | sed -E 's|^(.*#)http(.*#)http://(.*)#|\1https\2ssh://bonjour@\3|' | tr "#" "\n"
+echo "$LIGHT_BLUE""ftps urls:""$NC"
+minikube service ftps --url | head -1 | sed 's|http://|ftp |;s|:| |'
