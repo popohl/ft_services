@@ -6,6 +6,13 @@
 LIGHT_BLUE="\033[1;34m"
 NC="\033[0m"
 
+# OS detection
+if [ "$OSTYPE" = "linux-gnu"* ]; then
+	MACHINE_OS="linux"
+elif [ "$OSTYPE" = "darwin"* ]; then
+	MACHINE_OS="mac"
+fi
+
 # Checks the presence of docker and minikube on the system
 if ! which docker 1> /dev/null || ! which minikube 1> /dev/null; then
 	echo "Please install docker and minikube before lauching this script"
@@ -29,6 +36,8 @@ case "$1" in
 		kubectl delete -k srcs
 		minikube stop
 		exit 0;;
+	extra)
+		brew install figlet lolcat;;
 	*) 
 		echo "Usage: ./ft_service [OPTION] [MODE]"
 		echo ""
@@ -66,6 +75,7 @@ fi
 
 # Builds Dockerfiles
 echo "Building Docker images"
+eval $(minikube docker-env)
 if [ "$VERBOSE" = "true" ]; then
 	docker build -t custom-nginx:latest srcs/nginx/
 else
