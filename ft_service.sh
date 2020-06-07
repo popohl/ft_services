@@ -117,6 +117,7 @@ kubectl get pods
 
 # Get urls
 echo ""
+echo "Type ""$LIGHT_BLUE""minikube dashboard""$NC" "to access the kubernetes dashboard."
 echo "$LIGHT_BLUE""Nginx urls:""$NC"
 minikube service nginx --url | tr "\n" "#" | sed -E 's|^(.*#)http(.*#)http://(.*)#|\1https\2ssh://bonjour@\3|' | tr "#" "\n"
 echo "$LIGHT_BLUE""ftps urls:""$NC"
