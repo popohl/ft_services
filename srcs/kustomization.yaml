@@ -1,3 +1,9 @@
+secretGenerator:
+- name: ingress-secret
+  files:
+  - ingress/tls.crt
+  - ingress/tls.key
 resources:
   - nginx.yaml
   - ftps.yaml
+  - ingress.yaml
