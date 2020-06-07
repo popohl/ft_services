@@ -65,7 +65,7 @@ if ! minikube status 1> /dev/null 2> /dev/null; then
 	if [ "$VERBOSE" = "true" ]; then
 		minikube start --driver=virtualbox
 	else
-		minikube start 1> /dev/null
+		minikube start --driver=virtualbox 1> /dev/null
 	fi
 	echo "Minikube started!"
 fi

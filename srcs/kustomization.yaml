@@ -1,3 +1,3 @@
 resources:
-  - nginx-deployment.yaml
-  - ftps-deployment.yaml
+  - nginx.yaml
+  - ftps.yaml
