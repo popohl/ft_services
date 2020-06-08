@@ -3,7 +3,12 @@ secretGenerator:
   files:
   - ingress/tls.crt
   - ingress/tls.key
+- name: mysql-pass
+  literals:
+  - password=hello
 resources:
   - nginx.yaml
   - ftps.yaml
   - ingress.yaml
+  - wordpress.yaml
+  - mysql.yaml

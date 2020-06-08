@@ -90,9 +90,13 @@ echo "Building Docker images"
 eval "$(minikube docker-env)"
 if [ "$VERBOSE" = "true" ]; then
 	docker build -t custom-nginx:latest srcs/nginx/
+	docker build -t custom-wordpress:latest srcs/wordpress/
+	# docker build -t custom-mysql:latest srcs/mysql/
 	docker build -t custom-ftps:latest srcs/ftps/
 else
 	docker build -t custom-nginx:latest srcs/nginx/ 1> /dev/null
+	docker build -t custom-wordpress:latest srcs/wordpress/ 1> /dev/null
+	# docker build -t custom-mysql:latest srcs/mysql/ 1> /dev/null
 	docker build -t custom-ftps:latest srcs/ftps/ 1> /dev/null
 fi
 
@@ -120,5 +124,7 @@ echo ""
 echo "Type ""$LIGHT_BLUE""minikube dashboard""$NC" "to access the kubernetes dashboard."
 echo "$LIGHT_BLUE""Nginx urls:""$NC"
 minikube service nginx --url | tr "\n" "#" | sed -E 's|^(.*#)http(.*#)http://(.*)#|\1https\2ssh://bonjour@\3|' | tr "#" "\n"
+echo "$LIGHT_BLUE""Wordpress urls:""$NC"
+minikube service wordpress --url
 echo "$LIGHT_BLUE""ftps urls:""$NC"
 minikube service ftps --url | head -1 | sed 's|http://|ftp |;s|:| |'
