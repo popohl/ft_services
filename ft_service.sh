@@ -90,14 +90,16 @@ echo "Building Docker images"
 eval "$(minikube docker-env)"
 if [ "$VERBOSE" = "true" ]; then
 	docker build -t custom-nginx:latest srcs/nginx/
-	docker build -t custom-wordpress:latest srcs/wordpress/
-	# docker build -t custom-mysql:latest srcs/mysql/
 	docker build -t custom-ftps:latest srcs/ftps/
+	docker build -t custom-wordpress:latest srcs/wordpress/
+	docker build -t custom-mysql:latest srcs/mysql/
+	docker build -t custom-mysql:latest srcs/phpmyadmin/
 else
 	docker build -t custom-nginx:latest srcs/nginx/ 1> /dev/null
-	docker build -t custom-wordpress:latest srcs/wordpress/ 1> /dev/null
-	# docker build -t custom-mysql:latest srcs/mysql/ 1> /dev/null
 	docker build -t custom-ftps:latest srcs/ftps/ 1> /dev/null
+	docker build -t custom-wordpress:latest srcs/wordpress/ 1> /dev/null
+	docker build -t custom-mysql:latest srcs/mysql/ 1> /dev/null
+	docker build -t custom-mysql:latest srcs/phpmyadmin/ 1> /dev/null
 fi
 
 # Applies kustomization

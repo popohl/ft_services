@@ -1,0 +1,17 @@
+FROM alpine:latest
+LABEL Paul OHL <pohl@student.42.fr>
+
+RUN apk add pure-ftpd --repository http://dl-3.alpinelinux.org/alpine/edge/testing/ --allow-untrusted --no-cache \
+		&& apk add openssl
+
+RUN openssl req -x509 -nodes -days 365 -newkey rsa:2048 -subj "/C=FR/ST=Denial/L=Paris/O=42/CN=ft_service" -keyout /etc/ssl/private/pure-ftpd.pem -out /etc/ssl/private/pure-ftpd.pem \
+		&& chmod 600 /etc/ssl/private/pure-ftpd.pem
+
+RUN mkdir -p /ftps/admin && touch /ftps/admin/surprise_motherfucker \
+		&& adduser -h /ftps/$FTP_USER -D "admin" \
+		&& echo "admin:admin" | chpasswd
+
+EXPOSE 21 30020
+
+CMD /usr/sbin/pure-ftpd -Y 2 -p 30020:30020 -P "192.168.99.111"
+# while true; do sleep 100; done && 
