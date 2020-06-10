@@ -45,8 +45,9 @@ spec:
         tier: frontend
     spec:
       containers:
-      - image: wordpress:4.8-apache
+      - image: custom-wordpress:latest
         name: wordpress
+        imagePullPolicy: Never
         env:
         - name: WORDPRESS_DB_HOST
           value: wordpress-mysql
