@@ -1,22 +1,36 @@
-FROM alpine
+FROM alpine:latest
 LABEL Paul OHL <pohl@student.42.fr>
 
 RUN apk update && apk upgrade
-RUN apk add nginx php-fpm php-cli
+RUN apk add nginx php-fpm php-cli php7-mysqli
 
-# nginx configuration
-RUN rm /etc/nginx/conf.d/default.conf
-COPY ./default.conf /etc/nginx/conf.d/default.conf
-RUN mkdir /run/nginx && echo 2 > /run/nginx/nginx.pid
-RUN mkdir -p /usr/share/nginx/html
+# RUN docker-php-ext-install mysqli
 
-# Wordpress configuration
-RUN mkdir -p /var/www/html
+# Setup nginx
+RUN mkdir /run/nginx && echo 2 > /run/nginx/nginx.pid \
+	&& mkdir -p /usr/share/nginx/html \
+	&& rm /etc/nginx/conf.d/default.conf
+COPY nginx.conf /etc/nginx/nginx.conf
+
+# Setup Wordpress
 RUN wget -O wordpress.zip https://wordpress.org/latest.zip
-RUN unzip wordpress.zip -d /var/www/
-# RUN chown -R www-data:www-data /var/www/* \
-# 	&& chmod -R 755 /var/www/*
+RUN mkdir -p /var/www/html /var/www/info \
+	&& unzip /wordpress.zip -d /var/www/ \
+	&& rm wordpress.zip \
+	&& rm -rf /var/www/wordpress/wp-config.php
+COPY wp-config.php /var/www/wordpress/wp-config.php
+
+# Start php
+# try without this at some point
+# RUN mkdir -p /run/openrc/
+# RUN touch /run/openrc/softlevel 
+# RUN rc-service php-fpm7 start
+
+# Create user
+RUN printf "hello\nhello\n" | adduser bonjour \
+	&& chown -R bonjour:bonjour /var/www/* \
+	&& chmod -R 755 /var/www/*
 
 EXPOSE 80
 
-CMD nginx -g 'daemon off;'
+CMD php-fpm7 && nginx -g 'daemon off;'

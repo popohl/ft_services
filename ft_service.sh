@@ -83,6 +83,7 @@ fi
 # Prepares Dockerfiles
 mk_ip=$(minikube ip)
 sed "s|#MINIKUBE_IP#|$mk_ip|g" < srcs/ftps/Dockerfile-template > srcs/ftps/Dockerfile
+# sed -i '' "s/##MINIKUBE_IP##/$MINIKUBE_IP/g" < srcs/wordpress/wordpress_dump-template.sql > srcs/wordpress/wordpress_dump.sql
 
 
 # Builds Dockerfiles
@@ -92,11 +93,13 @@ if [ "$VERBOSE" = "true" ]; then
 	docker build -t custom-nginx:latest srcs/nginx/
 	docker build -t custom-wordpress:latest srcs/wordpress/
 	# docker build -t custom-mysql:latest srcs/mysql/
+	# docker build -t custom-phpmyadmin:latest srcs/mysql/
 	docker build -t custom-ftps:latest srcs/ftps/
 else
 	docker build -t custom-nginx:latest srcs/nginx/ 1> /dev/null
 	docker build -t custom-wordpress:latest srcs/wordpress/ 1> /dev/null
 	# docker build -t custom-mysql:latest srcs/mysql/ 1> /dev/null
+	# docker build -t custom-phpmyadmin:latest srcs/mysql/ 1> /dev/null
 	docker build -t custom-ftps:latest srcs/ftps/ 1> /dev/null
 fi
 
@@ -124,7 +127,7 @@ echo ""
 echo "Type ""$LIGHT_BLUE""minikube dashboard""$NC" "to access the kubernetes dashboard."
 echo "$LIGHT_BLUE""Nginx urls:""$NC"
 minikube service nginx --url | tr "\n" "#" | sed -E 's|^(.*#)http(.*#)http://(.*)#|\1https\2ssh://bonjour@\3|' | tr "#" "\n"
-echo "$LIGHT_BLUE""Wordpress urls:""$NC"
+echo "$LIGHT_BLUE""Wordpress url:""$NC"
 minikube service wordpress --url
 echo "$LIGHT_BLUE""ftps urls:""$NC"
 minikube service ftps --url | head -1 | sed 's|http://|ftp |;s|:| |'

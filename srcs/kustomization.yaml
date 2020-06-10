@@ -7,8 +7,8 @@ secretGenerator:
   literals:
   - password=hello
 resources:
-  - nginx.yaml
-  - ftps.yaml
+  # - nginx.yaml
+  # - ftps.yaml
   - ingress.yaml
   - wordpress.yaml
   - mysql.yaml
