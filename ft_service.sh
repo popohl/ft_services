@@ -44,7 +44,7 @@ case "$1" in
 	extra)
 		brew install figlet lolcat
 		exit 0;;
-	*) 
+	*)
 		echo "Usage: ./ft_service [OPTION] [MODE]"
 		echo ""
 		echo "Options:"
@@ -83,7 +83,6 @@ fi
 # Prepares Dockerfiles
 mk_ip=$(minikube ip)
 sed "s|#MINIKUBE_IP#|$mk_ip|g" < srcs/ftps/Dockerfile-template > srcs/ftps/Dockerfile
-# sed -i '' "s/##MINIKUBE_IP##/$MINIKUBE_IP/g" < srcs/wordpress/wordpress_dump-template.sql > srcs/wordpress/wordpress_dump.sql
 
 
 # Builds Dockerfiles
@@ -92,13 +91,13 @@ eval "$(minikube docker-env)"
 if [ "$VERBOSE" = "true" ]; then
 	docker build -t custom-nginx:latest srcs/nginx/
 	docker build -t custom-wordpress:latest srcs/wordpress/
-	# docker build -t custom-mysql:latest srcs/mysql/
+	docker build -t custom-mysql:latest srcs/mysql/
 	# docker build -t custom-phpmyadmin:latest srcs/phpmyadmin/
 	# docker build -t custom-ftps:latest srcs/ftps/
 else
 	docker build -t custom-nginx:latest srcs/nginx/ 1> /dev/null
 	docker build -t custom-wordpress:latest srcs/wordpress/ 1> /dev/null
-	# docker build -t custom-mysql:latest srcs/mysql/ 1> /dev/null
+	docker build -t custom-mysql:latest srcs/mysql/ 1> /dev/null
 	# docker build -t custom-phpmyadmin:latest srcs/phpmyadmin/ 1> /dev/null
 	# docker build -t custom-ftps:latest srcs/ftps/ 1> /dev/null
 fi

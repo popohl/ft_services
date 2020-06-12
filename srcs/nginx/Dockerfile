@@ -2,7 +2,8 @@ FROM alpine
 LABEL Paul OHL <pohl@student.42.fr>
 
 RUN apk update && apk upgrade
-RUN apk add openssl openssh nginx
+RUN apk add openssl openssh nginx && \
+	rm -f /var/cache/apk/*
 
 RUN rm /etc/nginx/conf.d/default.conf
 COPY ./default.conf /etc/nginx/conf.d/default.conf

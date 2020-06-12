@@ -2,7 +2,8 @@ FROM alpine:latest
 LABEL Paul OHL <pohl@student.42.fr>
 
 RUN apk update && apk upgrade
-RUN apk add nginx php-fpm php-cli php7-mysqli
+RUN apk add nginx php-fpm php-cli php7-mysqli && \
+	rm -f /var/cache/apk/*
 
 # RUN docker-php-ext-install mysqli
 
@@ -15,16 +16,14 @@ COPY nginx.conf /etc/nginx/nginx.conf
 # Setup Wordpress
 RUN wget -O wordpress.zip https://wordpress.org/latest.zip
 RUN mkdir -p /var/www/html /var/www/info \
-	&& unzip /wordpress.zip -d /var/www/ \
+	&& unzip /wordpress.zip -d /var/www/ 1> /dev/null \
 	&& rm wordpress.zip \
 	&& rm -rf /var/www/wordpress/wp-config.php
 COPY wp-config.php /var/www/wordpress/wp-config.php
 
-# Start php
-# try without this at some point
-# RUN mkdir -p /run/openrc/
-# RUN touch /run/openrc/softlevel 
-# RUN rc-service php-fpm7 start
+# Temporary, just to test database
+# RUN rm /var/www/wordpress/index.php
+COPY index.php /var/www/wordpress/test.php
 
 # Create user
 RUN printf "hello\nhello\n" | adduser bonjour \
