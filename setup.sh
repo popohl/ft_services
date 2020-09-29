@@ -105,13 +105,8 @@ check_install lftp "A ftp client to test ftps" "no"
 check_install "lolcat" "A program for funky cli writing" "no"
 check_install "figlet" "Another program for funky cli writing" "no"
 
-# Check if docker requires sudo rights
-if ! docker images 1> /dev/null 2> /dev/null; then
-	echo 'Docker currently requires root access,'
-	sudo usermod -aG docker $(whoami)
-	echo 'please reboot for the changes to take effect.'
-	exit 1
-fi
+# Give sudo permission to docker
+sudo usermod -aG docker $(whoami)
 
 # Check if minikube is launched
 if ! minikube status 1> /dev/null; then
@@ -186,7 +181,11 @@ echo -e "$_GREEN✓$_YELLOW Done!$_NOCOLOR"
 
 echo -e "\n$_GREEN✓$_YELLOW	ft_services deployment complete !$_NOCOLOR"
 
-figlet "The results  :" | lolcat -F 0.4 -a
+if ! which figlet || ! which lolcat ; then
+	echo "The results:"
+else
+	figlet "The results  :" | lolcat -F 0.4 -a
+fi
 
 kubectl get pods
 
