@@ -48,10 +48,17 @@ test_msg () {
 	fi
 	echo -e "'kubectl get pods' for pod status\n"
 	echo -e "'kubectl get services' for list of ips\n"
+	echo -e "'minikube dashboard' for a dashboard with lots of info"
 	# Test SSH
 	echo "To test ssh:"
 	echo "ssh admin@$(kubectl get services | grep "nginx" | cut -d' ' -f16) -p 22"
 	echo "password: password"
+	# Test FTPS
+	echo "To test ftps:"
+	echo "lftp admin@172.17.0.2"
+	echo "password: password"
+	echo "write 'set ssl:verify-certificate no' to disable certificate verification"
+	echo "'put' to send a file, 'ls' to list files, 'get' to fetch a file"
 }
 
 # Read arguments
