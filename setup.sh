@@ -86,14 +86,6 @@ SERVICE_LIST="nginx mysql wordpress phpmyadmin ftps influxdb telegraf grafana"
 
 [ -z "${USER}" ] && export USER=`whoami`
 
-# Updating the system
-echo -ne "$_GREEN➜$_YELLOW Update Packages... \n"
-sudo apt-get -y update 1> /dev/null
-echo -ne "$_GREEN➜$_YELLOW Done $_GREEN✓$_YELLOW \n"
-echo -ne "$_GREEN➜$_YELLOW Upgrade Packages... \n"
-sudo apt-get -y dist-upgrade 1> /dev/null
-echo -ne "$_GREEN➜$_YELLOW Done $_GREEN✓$_YELLOW \n $_NOCOLOR"
-
 # Check programs installation
 # check_install (program_name, description, is_required)
 check_install () {
