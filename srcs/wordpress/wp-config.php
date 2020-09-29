@@ -20,22 +20,24 @@
 
 // ** MySQL settings - You can get this info from your web host ** //
 /** The name of the database for WordPress */
-define('DB_NAME', 'wordpress');
+define( 'DB_NAME', 'wordpress' );
 
 /** MySQL database username */
-define('DB_USER', 'root');
+	define( 'DB_USER', 'wp_admin' );
 
 /** MySQL database password */
-define('DB_PASSWORD', 'hello');
+	define( 'DB_PASSWORD', 'password' );
 
 /** MySQL hostname */
-define('DB_HOST', 'wordpress-mysql');
+define( 'DB_HOST', 'mysql' );
+
+define('FS_METHOD', 'direct');
 
 /** Database Charset to use in creating database tables. */
-define('DB_CHARSET', 'utf8');
+//define( 'DB_CHARSET', 'utf8' );
 
 /** The Database Collate type. Don't change this if in doubt. */
-define('DB_COLLATE', '');
+//define( 'DB_COLLATE', '' );
 
 /**#@+
  * Authentication Unique Keys and Salts.
@@ -46,14 +48,14 @@ define('DB_COLLATE', '');
  *
  * @since 2.6.0
  */
-define('AUTH_KEY',         '40dacdcba75fcbe49c9fc3338faf7079ba921c71');
-define('SECURE_AUTH_KEY',  'ae7841f5a7a239af6ff72e6a5a457752ccc0f0f2');
-define('LOGGED_IN_KEY',    '2fc0bb26d40d6db71bd6e24a4c73e13d3cb28e30');
-define('NONCE_KEY',        '56558cf6f1141832bc96557928cac3d7bd298fd7');
-define('AUTH_SALT',        '326b6cd443797d8e175ae86e17fda69ac48486a9');
-define('SECURE_AUTH_SALT', '010c92a1d58cce133d4bd0f31732da75950934a4');
-define('LOGGED_IN_SALT',   '14493959974a23ff392108f687a3db7df35f67d7');
-define('NONCE_SALT',       'e65639fcaf054cfdb8997d77ebe28cd1ebac7d54');
+define( 'AUTH_KEY',         'put your unique phrase here' );
+define( 'SECURE_AUTH_KEY',  'put your unique phrase here' );
+define( 'LOGGED_IN_KEY',    'put your unique phrase here' );
+define( 'NONCE_KEY',        'put your unique phrase here' );
+define( 'AUTH_SALT',        'put your unique phrase here' );
+define( 'SECURE_AUTH_SALT', 'put your unique phrase here' );
+define( 'LOGGED_IN_SALT',   'put your unique phrase here' );
+define( 'NONCE_SALT',       'put your unique phrase here' );
 
 /**#@-*/
 
@@ -63,7 +65,7 @@ define('NONCE_SALT',       'e65639fcaf054cfdb8997d77ebe28cd1ebac7d54');
  * You can have multiple installations in one database if you give each
  * a unique prefix. Only numbers, letters, and underscores please!
  */
-$table_prefix  = 'wp_';
+$table_prefix = 'wp_';
 
 /**
  * For developers: WordPress debugging mode.
@@ -77,19 +79,15 @@ $table_prefix  = 'wp_';
  *
  * @link https://codex.wordpress.org/Debugging_in_WordPress
  */
-define('WP_DEBUG', false);
+define( 'WP_DEBUG', false );
 
-// If we're behind a proxy server and using HTTPS, we need to alert Wordpress of that fact
-// see also http://codex.wordpress.org/Administration_Over_SSL#Using_a_Reverse_Proxy
-if (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') {
-        $_SERVER['HTTPS'] = 'on';
-}
-
-/* That's all, stop editing! Happy blogging. */
+/* That's all, stop editing! Happy publishing. */
 
 /** Absolute path to the WordPress directory. */
-if ( !defined('ABSPATH') )
-        define('ABSPATH', dirname(__FILE__) . '/');
+if ( ! defined( 'ABSPATH' ) ) {
+	define( 'ABSPATH', dirname( __FILE__ ) . '/' );
+}
 
 /** Sets up WordPress vars and included files. */
-require_once(ABSPATH . 'wp-settings.php');
+require_once( ABSPATH . 'wp-settings.php' );
+?>

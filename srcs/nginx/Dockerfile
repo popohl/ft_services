@@ -1,21 +1,29 @@
-FROM alpine
-LABEL Paul OHL <pohl@student.42.fr>
+FROM alpine:latest
 
-RUN apk update && apk upgrade
-RUN apk add openssl openssh nginx && \
-	rm -f /var/cache/apk/*
+# Install nginx and its dependencies
+RUN apk update && apk add nginx \
+&& apk add --no-cache --upgrade bash \
+&& apk add openssl && mkdir -p var/run/nginx \
+&& apk add openssl openssh \
+&& rm -rf /var/cache/apk/*
 
-RUN rm /etc/nginx/conf.d/default.conf
-COPY ./default.conf /etc/nginx/conf.d/default.conf
-RUN mkdir /run/nginx && echo 2 > /run/nginx/nginx.pid
-RUN mkdir -p /usr/share/nginx/html
-RUN wget -O /usr/share/nginx/html/index.html https://raw.githubusercontent.com/nginx/nginx/master/docs/html/index.html
-RUN openssl req -x509 -newkey rsa:4096 -keyout /etc/nginx/certificate.key -out /etc/nginx/certificate.pem -days 365 -subj '/C=FR/ST=Denial/L=Paris/O=42/CN=localhost' -nodes
-RUN ssh-keygen -f /etc/ssh/ssh_host_rsa_key -t rsa -N ''
-# RUN mkdir /run/openrc && touch /run/openrc/softlevel
-RUN printf "hello\nhello\n" | adduser bonjour
-RUN chown -R bonjour:bonjour /usr/share/nginx
+#RUN NGINX
+RUN mkdir -p /www
+COPY ./index.html /www
+
+# Create the file with the ssl key inside
+RUN mkdir -p /etc/nginx/ssl && openssl req -newkey rsa:2048 -x509 -days 365 -nodes -keyout /etc/nginx/ssl/services.key -out /etc/nginx/ssl/services.pem -subj "/C=FR/ST=Paris/L=Paris/O=42, Inc./OU=IT/CN=ft_services"
+
+RUN	usr/bin/ssh-keygen -A 
+COPY	sshd_config /etc/ssh/
+
+# Nginnx config
+RUN rm /etc/nginx/nginx.conf
+COPY ./nginx.conf /etc/nginx/nginx.conf
+
+COPY setup.sh .
+
+RUN chmod +x setup.sh
 
 EXPOSE 80 443 22
-
-CMD /usr/sbin/sshd ; nginx -g 'daemon off;'
+CMD ./setup.sh

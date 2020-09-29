@@ -1,35 +1,18 @@
 FROM alpine:latest
-LABEL Paul OHL <pohl@student.42.fr>
 
-RUN apk update && apk upgrade
-RUN apk add nginx php-fpm php-cli php7-mysqli && \
-	rm -f /var/cache/apk/*
+RUN apk update && apk add wget && mkdir /www \
+&& apk add php7 php7-fpm php7-opcache php7-gd php7-mysqli php7-zlib php7-curl php7-mbstring php7-json php7-session
 
-# RUN docker-php-ext-install mysqli
+RUN wget https://wordpress.org/latest.tar.gz \
+&& tar -xvf latest.tar.gz \
+&& mv wordpress/* /www \
+&& rm -rf /var/cache/apk/*
 
-# Setup nginx
-RUN mkdir /run/nginx && echo 2 > /run/nginx/nginx.pid \
-	&& mkdir -p /usr/share/nginx/html \
-	&& rm /etc/nginx/conf.d/default.conf
-COPY nginx.conf /etc/nginx/nginx.conf
+COPY ./wp-config.php /www/wp-config.php
+COPY setup.sh .
 
-# Setup Wordpress
-RUN wget -O wordpress.zip https://wordpress.org/latest.zip
-RUN mkdir -p /var/www/html /var/www/info \
-	&& unzip /wordpress.zip -d /var/www/ 1> /dev/null \
-	&& rm wordpress.zip \
-	&& rm -rf /var/www/wordpress/wp-config.php
-COPY wp-config.php /var/www/wordpress/wp-config.php
+RUN chmod +x setup.sh
 
-# Temporary, just to test database
-# RUN rm /var/www/wordpress/index.php
-COPY index.php /var/www/wordpress/test.php
+EXPOSE 5050
 
-# Create user
-RUN printf "hello\nhello\n" | adduser bonjour \
-	&& chown -R bonjour:bonjour /var/www/* \
-	&& chmod -R 755 /var/www/*
-
-EXPOSE 80
-
-CMD php-fpm7 && nginx -g 'daemon off;'
+CMD ./setup.sh

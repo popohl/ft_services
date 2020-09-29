@@ -1,16 +1,20 @@
 FROM alpine:latest
-LABEL Paul OHL <pohl@student.42.fr>
 
-RUN apk update && apk upgrade
-RUN apk add mysql mysql-client && \
-	rm -f /var/cache/apk/*
+# installation
+RUN apk update \
+&& apk add mariadb mariadb-client && apk add --no-cache --upgrade bash \
+&& rm -rf /var/cache/apk/*
 
-COPY my.cnf /etc/mysql/my.cnf
-COPY entrypoint /entrypoint
+# RUN service mysql start
+RUN mysql --version
 
-RUN mkdir /app
+# Copy initialisation script
+COPY ./init_docker.sh .
+COPY ./setup.sh .
+COPY ./wordpress.sql .
 
-EXPOSE 3306
+# Add permission
+RUN chmod 777 init_docker.sh
+RUN chmod 777 setup.sh
 
-CMD sh /entrypoint
-
+ENTRYPOINT [ "./init_docker.sh" ]

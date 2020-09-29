@@ -1,0 +1,10 @@
+secretGenerator:
+resources:
+- ftps.yml
+- grafana.yml
+- influxdb.yml
+- mysql.yml
+- nginx.yml
+- phpmyadmin.yml
+- telegraf.yml
+- wordpress.yml
