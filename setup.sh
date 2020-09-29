@@ -21,7 +21,6 @@ man_msg () {
 	echo "Modes:"
 	echo "    start     Starts the project"
 	echo "    stop      Deletes the current kustomization"
-	echo "    stop_all  Deletes the current kustomization and stops Minikube"
 	echo "    help      Displays this help"
 	echo "    test      Displays help to test the project"
 }
@@ -42,11 +41,6 @@ elif [ "$2" = "-v" ]; then
 	verbose="true"
 fi
 
-cleanup () {
-	kubectl delete -k srcs/ #--wait=false
-	rm srcs/ftps.yaml
-}
-
 test_msg () {
 	if ! minikube status > /dev/null ; then
 		echo -e "${_RED}Minikube not started,$_YELLOW run '$0 start'$_NOCOLOR"
@@ -62,18 +56,10 @@ test_msg () {
 
 # Read arguments
 case "$1" in
-	start | launch)
+	start | launch | go)
 		echo "Starting ft_services!";;
-	restart)
-		cleanup
-		echo "Restarting";;
-	stop)
-		cleanup
-		minikube stop
-		exit 0;;
-	stop_all | delete_all)
-		echo "Deleting project"
-		cleanup
+	stop | delete | del)
+		#rm srcs/ftps.yml
 		minikube delete
 		exit 0;;
 	test)
@@ -151,7 +137,7 @@ fi
 
 # Preparing files
 MINIKUBE_IP="$(kubectl get node -o=custom-columns='DATA:status.addresses[0].address' | sed -n 2p)"
-sed 's/MINIKUBE_IP/'"$MINIKUBE_IP"'/g' < srcs/ftps-template.yml > srcs/ftps.yml
+#sed 's/MINIKUBE_IP/'"$MINIKUBE_IP"'/g' < srcs/ftps-template.yml > srcs/ftps.yml
 #sed 's/MINIKUBE_IP/'"$MINIKUBE_IP"'/g' < srcs/ftps/setup-template.sh > srcs/ftps/setup.sh
 sed 's/MINIKUBE_IP/'"$MINIKUBE_IP"'/g' < srcs/telegraf/telegraf-template.conf > srcs/telegraf/telegraf.conf
 
@@ -205,4 +191,4 @@ figlet "The results  :" | lolcat -F 0.4 -a
 
 kubectl get pods
 
-echo -e "\nWrite$_YELLOW '$0 help'$_NOCOLOR for help message"
+echo -e "\nWrite$_YELLOW '$0 test'$_NOCOLOR for help message to test project"

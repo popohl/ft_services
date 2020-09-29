@@ -65,7 +65,7 @@ spec:
           hostPort: 21000
         volumeMounts:
         - name: ftps-persistent-storage
-          mountPath: /ftps
+          mountPath: /ftps/
       volumes:
         - name: ftps-persistent-storage
           persistentVolumeClaim:
