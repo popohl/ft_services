@@ -51,7 +51,7 @@ test_msg () {
 	echo -e "'minikube dashboard' for a dashboard with lots of info"
 	# Test SSH
 	echo "To test ssh:"
-	echo "ssh admin@$(kubectl get services | grep "nginx" | cut -d' ' -f16) -p 22"
+	echo "ssh admin@172.17.0.4"
 	echo "password: password"
 	# Test FTPS
 	echo "To test ftps:"
@@ -66,7 +66,6 @@ case "$1" in
 	start | launch | go)
 		echo "Starting ft_services!";;
 	stop | delete | del)
-		#rm srcs/ftps.yml
 		minikube delete
 		exit 0;;
 	test)
@@ -133,7 +132,7 @@ fi
 MINIKUBE_IP="$(kubectl get node -o=custom-columns='DATA:status.addresses[0].address' | sed -n 2p)"
 #sed 's/MINIKUBE_IP/'"$MINIKUBE_IP"'/g' < srcs/ftps-template.yml > srcs/ftps.yml
 #sed 's/MINIKUBE_IP/'"$MINIKUBE_IP"'/g' < srcs/ftps/setup-template.sh > srcs/ftps/setup.sh
-sed 's/MINIKUBE_IP/'"$MINIKUBE_IP"'/g' < srcs/telegraf/telegraf-template.conf > srcs/telegraf/telegraf.conf
+#sed 's/MINIKUBE_IP/'"$MINIKUBE_IP"'/g' < srcs/telegraf/telegraf-template.conf > srcs/telegraf/telegraf.conf
 
 # Install metallb
 metallb_install () {
@@ -181,12 +180,16 @@ echo -e "$_GREEN✓$_YELLOW Done!$_NOCOLOR"
 
 echo -e "\n$_GREEN✓$_YELLOW	ft_services deployment complete !$_NOCOLOR"
 
-if ! which figlet || ! which lolcat ; then
+sleep 4
+
+if ! which figlet > /dev/null || ! which lolcat > /dev/null ; then
 	echo "The results:"
 else
 	figlet "The results  :" | lolcat -F 0.4 -a
 fi
 
 kubectl get pods
+echo ""
+kubectl get services
 
 echo -e "\nWrite$_YELLOW '$0 test'$_NOCOLOR for help message to test project"
