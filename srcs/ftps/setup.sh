@@ -7,4 +7,10 @@ chmod 600 /etc/ssl/private/pure-ftpd.pem
 adduser -h /ftps/$FTP_USER -D $FTP_USER
 echo "$FTP_USER:$FTP_PASSWORD" | chpasswd
 
-/usr/sbin/pure-ftpd -j -Y 2 -p 21000:21000 -P $START_FTPS_IP
+/usr/sbin/pure-ftpd -j -Y 2 -p 21000:21000 -P $START_FTPS_IP &
+while true; do
+	if ! pgrep pure-ftpd > /dev/null; then
+		/usr/sbin/pure-ftpd -j -Y 2 -p 21000:21000 -P $START_FTPS_IP &
+	fi
+	sleep 10
+done
